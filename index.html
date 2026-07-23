@@ -2,51 +2,170 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Convertisseur</title>
+<title>Convertisseur universel</title>
+
 <style>
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   text-align: center;
-  margin-top: 50px;
+  background: #f2f2f2;
+  padding: 40px;
+}
+
+.box {
+  background: white;
+  max-width: 500px;
+  margin: auto;
+  padding: 25px;
+  border-radius: 15px;
 }
 
 input, select, button {
-  padding: 10px;
-  margin: 5px;
+  width: 90%;
+  padding: 12px;
+  margin: 8px;
   font-size: 16px;
 }
+
+button {
+  background: #0066ff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+button:hover {
+  background: #0044aa;
+}
+
+#resultat {
+  font-size: 22px;
+  margin-top: 20px;
+}
 </style>
+
 </head>
 
 <body>
 
-<h1>📏 Convertisseur de longueur</h1>
+<div class="box">
 
-<input id="valeur" type="number" placeholder="Valeur">
+<h1>🔄 Convertisseur universel</h1>
 
-<select id="unite">
-  <option value="m">Mètre</option>
-  <option value="km">Kilomètre</option>
-  <option value="cm">Centimètre</option>
+<input id="nombre" type="number" placeholder="Entrez une valeur">
+
+<select id="type" onchange="changerUnites()">
+<option value="longueur">📏 Longueur</option>
+<option value="poids">⚖️ Poids</option>
+<option value="temperature">🌡️ Température</option>
+<option value="temps">⏱️ Temps</option>
 </select>
 
-<button onclick="convertir()">Convertir en mètres</button>
+<select id="depart"></select>
 
-<h2 id="resultat"></h2>
+<select id="arrivee"></select>
+
+<button onclick="convertir()">Convertir</button>
+
+<div id="resultat"></div>
+
+</div>
+
 
 <script>
-function convertir() {
-  let valeur = Number(document.getElementById("valeur").value);
-  let unite = document.getElementById("unite").value;
-  let resultat;
 
-  if (unite === "km") resultat = valeur * 1000;
-  if (unite === "m") resultat = valeur;
-  if (unite === "cm") resultat = valeur / 100;
+const donnees = {
+longueur:["m","km","cm","mm"],
+poids:["kg","g","mg","lb"],
+temperature:["°C","°F","K"],
+temps:["seconde","minute","heure"]
+};
 
-  document.getElementById("resultat").innerHTML =
-    resultat + " mètres";
+
+function changerUnites(){
+
+let type=document.getElementById("type").value;
+
+let depart=document.getElementById("depart");
+let arrivee=document.getElementById("arrivee");
+
+depart.innerHTML="";
+arrivee.innerHTML="";
+
+donnees[type].forEach(u=>{
+depart.innerHTML += `<option>${u}</option>`;
+arrivee.innerHTML += `<option>${u}</option>`;
+});
+
 }
+
+changerUnites();
+
+
+function convertir(){
+
+let valeur=Number(document.getElementById("nombre").value);
+
+let type=document.getElementById("type").value;
+let d=document.getElementById("depart").value;
+let a=document.getElementById("arrivee").value;
+
+let resultat;
+
+
+if(type==="longueur"){
+let metres={
+m:1,
+km:1000,
+cm:0.01,
+mm:0.001
+};
+
+resultat=valeur*metres[d]/metres[a];
+}
+
+
+if(type==="poids"){
+let grammes={
+kg:1000,
+g:1,
+mg:0.001,
+lb:453.592
+};
+
+resultat=valeur*grammes[d]/grammes[a];
+}
+
+
+if(type==="temperature"){
+
+if(d==="°C" && a==="°F") resultat=valeur*9/5+32;
+else if(d==="°F" && a==="°C") resultat=(valeur-32)*5/9;
+else if(d==="°C" && a==="K") resultat=valeur+273.15;
+else if(d==="K" && a==="°C") resultat=valeur-273.15;
+else resultat=valeur;
+
+}
+
+
+if(type==="temps"){
+let secondes={
+seconde:1,
+minute:60,
+heure:3600
+};
+
+resultat=valeur*secondes[d]/secondes[a];
+
+}
+
+
+document.getElementById("resultat").innerHTML =
+"Résultat : " + resultat.toFixed(4) + " " + a;
+
+}
+
 </script>
 
 </body>
