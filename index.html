@@ -1,11 +1,53 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Mon premier site</title>
+<meta charset="UTF-8">
+<title>Convertisseur</title>
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  margin-top: 50px;
+}
+
+input, select, button {
+  padding: 10px;
+  margin: 5px;
+  font-size: 16px;
+}
+</style>
 </head>
+
 <body>
-  <h1>Bienvenue sur mon site !</h1>
-  <p>Mon site est maintenant en ligne.</p>
+
+<h1>📏 Convertisseur de longueur</h1>
+
+<input id="valeur" type="number" placeholder="Valeur">
+
+<select id="unite">
+  <option value="m">Mètre</option>
+  <option value="km">Kilomètre</option>
+  <option value="cm">Centimètre</option>
+</select>
+
+<button onclick="convertir()">Convertir en mètres</button>
+
+<h2 id="resultat"></h2>
+
+<script>
+function convertir() {
+  let valeur = Number(document.getElementById("valeur").value);
+  let unite = document.getElementById("unite").value;
+  let resultat;
+
+  if (unite === "km") resultat = valeur * 1000;
+  if (unite === "m") resultat = valeur;
+  if (unite === "cm") resultat = valeur / 100;
+
+  document.getElementById("resultat").innerHTML =
+    resultat + " mètres";
+}
+</script>
+
 </body>
 </html>
