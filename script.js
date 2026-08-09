@@ -18,6 +18,7 @@ const TICKER_PHRASES = [
   "🎭 only in ohio ce genre de move",
   "⚡ tu deviens littéralement une légende sigma",
   "🥶 trop froid, même le rizz gèle",
+   "xilio c un pseudo de pedo",
   "🫠 splortch approuve ton grind sans limite",
 ];
 
