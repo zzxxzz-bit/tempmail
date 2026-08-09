@@ -2,171 +2,122 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Convertisseur universel</title>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background: #f2f2f2;
-  padding: 40px;
-}
-
-.box {
-  background: white;
-  max-width: 500px;
-  margin: auto;
-  padding: 25px;
-  border-radius: 15px;
-}
-
-input, select, button {
-  width: 90%;
-  padding: 12px;
-  margin: 8px;
-  font-size: 16px;
-}
-
-button {
-  background: #0066ff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 8px;
-}
-
-button:hover {
-  background: #0044aa;
-}
-
-#resultat {
-  font-size: 22px;
-  margin-top: 20px;
-}
-</style>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>SPLORTCH CLICKER — le jeu le plus brainrot du game</title>
+<meta name="description" content="Clique, deviens sigma, atteins le rizz suprême. Le clicker le plus brainrot d'internet.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div class="box">
-
-<h1>🔄 Convertisseur universel</h1>
-
-<input id="nombre" type="number" placeholder="Entrez une valeur">
-
-<select id="type" onchange="changerUnites()">
-<option value="longueur">📏 Longueur</option>
-<option value="poids">⚖️ Poids</option>
-<option value="temperature">🌡️ Température</option>
-<option value="temps">⏱️ Temps</option>
-</select>
-
-<select id="depart"></select>
-
-<select id="arrivee"></select>
-
-<button onclick="convertir()">Convertir</button>
-
-<div id="resultat"></div>
-
+<!-- ticker de phrases brainrot en boucle -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack"></div>
 </div>
 
+<div class="chaos-bg" id="chaosBg"></div>
 
-<script>
+<header class="topbar">
+  <div class="logo">SPLORTCH<span>.CLICKER</span></div>
+  <div class="topbar-stats">
+    <div class="stat-chip">
+      <span class="stat-label">Neurones grillés</span>
+      <span class="stat-value" id="scoreDisplay">0</span>
+    </div>
+    <div class="stat-chip">
+      <span class="stat-label">/ seconde</span>
+      <span class="stat-value" id="perSecDisplay">0</span>
+    </div>
+    <div class="stat-chip prestige-chip">
+      <span class="stat-label">Rebirths</span>
+      <span class="stat-value" id="prestigeDisplay">0</span>
+    </div>
+  </div>
+  <button class="menu-btn" id="menuToggle" aria-label="Menu">☰</button>
+</header>
 
-const donnees = {
-longueur:["m","km","cm","mm"],
-poids:["kg","g","mg","lb"],
-temperature:["°C","°F","K"],
-temps:["seconde","minute","heure"]
-};
+<main class="layout">
 
+  <!-- ZONE DE CLIC -->
+  <section class="click-zone">
+    <div class="combo-banner" id="comboBanner"></div>
 
-function changerUnites(){
+    <button class="splortch-btn" id="clicker" aria-label="Cliquer sur Splortch">
+      <svg class="splortch-ring" viewBox="0 0 220 220" aria-hidden="true">
+        <circle cx="110" cy="110" r="100"></circle>
+      </svg>
+      <svg class="splortch" id="splortchSvg" viewBox="0 0 200 200" aria-hidden="true">
+        <ellipse class="blob" cx="100" cy="112" rx="78" ry="66"/>
+        <circle class="eye" cx="72" cy="98" r="16"/>
+        <circle class="eye" cx="128" cy="98" r="16"/>
+        <circle class="pupil" id="pupilL" cx="75" cy="100" r="7"/>
+        <circle class="pupil" id="pupilR" cx="131" cy="100" r="7"/>
+        <path class="mouth" d="M 70 130 Q 100 155 130 130" />
+        <circle class="cheek" cx="50" cy="118" r="10"/>
+        <circle class="cheek" cx="150" cy="118" r="10"/>
+      </svg>
+    </button>
 
-let type=document.getElementById("type").value;
+    <p class="click-hint">clique sur splortch pour générer des neurones grillés</p>
 
-let depart=document.getElementById("depart");
-let arrivee=document.getElementById("arrivee");
+    <div class="power-row">
+      <div class="power-card">
+        <span class="power-num" id="clickPowerDisplay">1</span>
+        <span class="power-label">par clic</span>
+      </div>
+      <div class="power-card">
+        <span class="power-num" id="critChanceDisplay">2%</span>
+        <span class="power-label">chance crit ×10</span>
+      </div>
+    </div>
+  </section>
 
-depart.innerHTML="";
-arrivee.innerHTML="";
+  <!-- SHOP -->
+  <section class="panel shop-panel" id="shopPanel">
+    <div class="panel-header">
+      <h2>Le Shop du Chaos</h2>
+      <p>investis tes neurones grillés dans des trucs qui n'ont aucun sens</p>
+    </div>
+    <div class="shop-list" id="shopList"></div>
+  </section>
 
-donnees[type].forEach(u=>{
-depart.innerHTML += `<option>${u}</option>`;
-arrivee.innerHTML += `<option>${u}</option>`;
-});
+  <!-- ACHIEVEMENTS + PRESTIGE -->
+  <aside class="panel side-panel" id="sidePanel">
+    <div class="panel-header">
+      <h2>Succès Ohio</h2>
+      <p id="achProgress">0 / 0 débloqués</p>
+    </div>
+    <div class="ach-grid" id="achGrid"></div>
 
-}
+    <div class="prestige-box">
+      <h3>Rebirth NPC 💀</h3>
+      <p>Réinitialise ta progression contre un multiplicateur permanent de neurones grillés.</p>
+      <p class="prestige-gain" id="prestigeGainText">+0.00× en rejouant maintenant</p>
+      <button class="prestige-btn" id="prestigeBtn">Devenir NPC (Rebirth)</button>
+    </div>
 
-changerUnites();
+    <div class="footer-actions">
+      <button class="ghost-btn" id="exportBtn">Exporter la save</button>
+      <button class="ghost-btn" id="importBtn">Importer une save</button>
+      <button class="ghost-btn danger" id="resetBtn">Reset total</button>
+    </div>
+  </aside>
 
+</main>
 
-function convertir(){
+<div class="floaters" id="floaters" aria-hidden="true"></div>
 
-let valeur=Number(document.getElementById("nombre").value);
+<dialog id="importDialog">
+  <h3>Importer une sauvegarde</h3>
+  <textarea id="importText" placeholder="Colle ton code de save ici..."></textarea>
+  <div class="dialog-actions">
+    <button id="importCancel" class="ghost-btn">Annuler</button>
+    <button id="importConfirm" class="prestige-btn">Importer</button>
+  </div>
+</dialog>
 
-let type=document.getElementById("type").value;
-let d=document.getElementById("depart").value;
-let a=document.getElementById("arrivee").value;
-
-let resultat;
-
-
-if(type==="longueur"){
-let metres={
-m:1,
-km:1000,
-cm:0.01,
-mm:0.001
-};
-
-resultat=valeur*metres[d]/metres[a];
-}
-
-
-if(type==="poids"){
-let grammes={
-kg:1000,
-g:1,
-mg:0.001,
-lb:453.592
-};
-
-resultat=valeur*grammes[d]/grammes[a];
-}
-
-
-if(type==="temperature"){
-
-if(d==="°C" && a==="°F") resultat=valeur*9/5+32;
-else if(d==="°F" && a==="°C") resultat=(valeur-32)*5/9;
-else if(d==="°C" && a==="K") resultat=valeur+273.15;
-else if(d==="K" && a==="°C") resultat=valeur-273.15;
-else resultat=valeur;
-
-}
-
-
-if(type==="temps"){
-let secondes={
-seconde:1,
-minute:60,
-heure:3600
-};
-
-resultat=valeur*secondes[d]/secondes[a];
-
-}
-
-
-document.getElementById("resultat").innerHTML =
-"Résultat : " + resultat.toFixed(4) + " " + a;
-
-}
-
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
